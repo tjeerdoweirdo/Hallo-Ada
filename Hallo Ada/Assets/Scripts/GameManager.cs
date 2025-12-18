@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
 
     // Persist inventory across restart
     List<string> keptItemIds = new List<string>();
+    bool hasWon = false;
 
     void Awake()
     {
@@ -27,6 +28,7 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         UpdateUI();
         if (winScreen != null) winScreen.SetActive(false);
+        hasWon = false;
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
@@ -44,13 +46,22 @@ public class GameManager : MonoBehaviour
     {
         if (booksText != null)
         {
-            booksText.text = $"Books: {collectedBooks}/{totalBooks}";
+            if (hasWon)
+            {
+                booksText.text = "You win";
+            }
+            else
+            {
+                booksText.text = $"Books: {collectedBooks}/{totalBooks}";
+            }
         }
     }
 
     void Win()
     {
-        if (winScreen != null) winScreen.SetActive(true);
+        // Show a simple victory message via the books text instead of enabling a win screen
+        hasWon = true;
+        UpdateUI();
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
@@ -67,6 +78,8 @@ public class GameManager : MonoBehaviour
         }
 
         collectedBooks = 0;
+        hasWon = false;
+        UpdateUI();
         var scene = SceneManager.GetActiveScene();
         SceneManager.LoadScene(scene.buildIndex);
     }
@@ -92,5 +105,7 @@ public class GameManager : MonoBehaviour
             }
         }
         keptItemIds.Clear();
+        // Ensure UI reflects reset/respawned collectibles
+        UpdateUI();
     }
 }

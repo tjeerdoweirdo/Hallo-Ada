@@ -92,4 +92,16 @@ public class Door : MonoBehaviour, Interactable
         Vector3 axis = transform.up;
         transform.RotateAround(hingeWorldPos, axis, deltaAngle);
     }
+
+#if UNITY_EDITOR
+    void OnDrawGizmosSelected()
+    {
+        ComputeHingePosition();
+        Gizmos.color = hingeOnLeftEdge ? Color.green : Color.blue;
+        Gizmos.DrawCube(hingeWorldPos, new Vector3(0.08f, 0.4f, 0.08f));
+        // Draw a line from hinge to door center for clarity
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(hingeWorldPos, transform.position);
+    }
+#endif
 }
